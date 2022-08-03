@@ -11,7 +11,7 @@ custom:
   #   useDownloadCache: false
   #   layer: true
   deploymentBucket:
-    name: "net.akakitune87.serverlessdeoloy"
+    name: ${env:DEPLOY_BUCKET}
 
 provider:
   name: aws
@@ -51,4 +51,8 @@ functions:
       - http:
           path: /q
           method: get
+          cors: true
+      - http:
+          path: /q
+          method: head
           cors: true

@@ -6,30 +6,35 @@ def main(event, context):
     print('event:', event)
     httpMethod = event.get('httpMethod')
     print('httpMethod:', httpMethod)
+    ua = event.get('headers').get('User-Agent', '')
+    print('User-Agent:', ua)
     queryStringParameters = event.get('queryStringParameters')
     if queryStringParameters is None:
         return returnBadRequest()
     url = queryStringParameters.get('url')
     if url is None:
         return returnBadRequest()
+    if httpMethod == 'HEAD':
+        # HEADはPCのみの挙動・・・だったらいいな
+        print('Not GET')
+        return returnRedirect(url)
+    if not ('Android' in ua):
+        # QuestのUAはstagefright/1.2 (Linux;Android 10)と予想
+        print('Not Quest', ua)
+        return returnRedirect(url)
+    # TODO: キャッシュから読み込み(URL変わらないよね・・・？)
     b = exec_ytdlp_cmd(url)
     j = json.loads(b)
     id = j['id']
     print(id)
     formats = j['formats']
-    aaa = ''
+    nama_url = ''
     for f in formats:
-        print(f['url'])
-        aaa = f['url']
-    return {
-        'headers': {
-            "Content-type": "text/html; charset=utf-8",
-            "Access-Control-Allow-Origin": "*",
-            "location": aaa
-        },
-        'statusCode': 302,
-        'body': "",
-    }
+        if f['ext'] == 'mp4' and f['url'] != '':
+            print('url->'+f['url'])
+            nama_url = f['url']
+    # TODO: キャッシュへ書き込み
+    return returnRedirect(nama_url)
 
 
 def returnBadRequest():
@@ -44,6 +49,18 @@ def returnBadRequest():
                 'error': 'bad request [1]'
             }
         )
+    }
+
+
+def returnRedirect(url):
+    return {
+        'headers': {
+            "Content-type": "text/html; charset=utf-8",
+            "Access-Control-Allow-Origin": "*",
+            "location": url
+        },
+        'statusCode': 302,
+        'body': "",
     }
 
 
