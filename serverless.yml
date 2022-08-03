@@ -1,0 +1,54 @@
+service: serverless-jinnai
+
+# plugins:
+#   - serverless-python-requirements
+
+custom:
+  # pythonRequirements:
+  #   dockerizePip: true
+  #   dockerImage: lambci/lambda:build-python3.9
+  #   useStaticCache: false
+  #   useDownloadCache: false
+  #   layer: true
+  deploymentBucket:
+    name: "net.akakitune87.serverlessdeoloy"
+
+provider:
+  name: aws
+  runtime: python3.9
+  provider: ${opt:stage}
+  lambdaHashingVersion: 20201221
+  region: ap-northeast-1
+  role: ${env:LAMBDA_IAM}
+  timeout: 30
+  logRetentionInDays: 14
+  tracing:
+    apiGateway: true
+    lambda: true
+
+package:
+  individually: true
+  exclude:
+    - node_modules/**
+    - doc/**
+    - .gitignore
+    - package-lock.json
+    - requirements.txt
+    - serverless.yml
+    - .env
+    - memo.txt
+
+functions:
+  get_quest_url:
+    handler: src/lambda/get_quest_url/handler.main
+    package:
+      include:
+        - src/lambda/get_quest_url/handler.py
+        - src/lambda/get_quest_url/yt-dlp
+      exclude:
+        - src/**
+    events:
+      - http:
+          path: /q
+          method: get
+          cors: true
