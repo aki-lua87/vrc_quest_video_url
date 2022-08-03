@@ -12,6 +12,7 @@ custom:
   #   layer: true
   deploymentBucket:
     name: ${env:DEPLOY_BUCKET}
+  vrc_video_table: ${env:DDB_TABLE}
 
 provider:
   name: aws
@@ -47,6 +48,8 @@ functions:
         - src/lambda/get_quest_url/yt-dlp
       exclude:
         - src/**
+    environment:
+      VRC_VIDEO_TABLE: ${self:custom.vrc_video_table}
     events:
       - http:
           path: /q
@@ -56,3 +59,23 @@ functions:
           path: /q
           method: head
           cors: true
+# resources:
+#   Resources:
+#     独自テーブルは持たず他テーブルを利用するためコメントアウト
+#     vrcQuestTable:
+#       Type: "AWS::DynamoDB::Table"
+#       Properties:
+#         TableName: ${self:service}-${opt:stage}-table
+#         AttributeDefinitions:
+#           - AttributeName: user_id
+#             AttributeType: S
+#           - AttributeName: video_id
+#             AttributeType: S
+#         KeySchema:
+#           - AttributeName: user_id
+#             KeyType: HASH
+#           - AttributeName: video_id
+#             KeyType: RANGE
+#         ProvisionedThroughput:
+#           ReadCapacityUnits: 3
+#           WriteCapacityUnits: 2

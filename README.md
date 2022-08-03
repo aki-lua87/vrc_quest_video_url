@@ -18,7 +18,10 @@ src\lambda\get_quest_url に yt-dlp(https://github.com/yt-dlp/yt-dlp) の配置�
 - DEPLOY_BUCKET
   - ServerlessFrameworkデプロイ先S3バケット
 
+- DDB_TABLE
+  - DynamoDBテーブル名
 
-### アクセス
 
-https://xxxxxxxxxxxx/q?url=[youtube_url]
+### Use
+
+https://cdtatu4j22.execute-api.ap-northeast-1.amazonaws.com/dev/q?url=[youtube_url]

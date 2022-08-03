@@ -1,5 +1,11 @@
 import json
 import subprocess
+import boto3
+import os
+from datetime import datetime, timedelta
+
+dynamodb = boto3.resource('dynamodb')
+table = dynamodb.Table(os.environ['VRC_VIDEO_TABLE'])
 
 
 def main(event, context):
@@ -22,19 +28,15 @@ def main(event, context):
         # QuestのUAはstagefright/1.2 (Linux;Android 10)と予想
         print('Not Quest', ua)
         return returnRedirect(url)
-    # TODO: キャッシュから読み込み(URL変わらないよね・・・？)
+    quest_url = ddbGetQuestURL(url)
+    if quest_url is not None:
+        print('use DynamoDB record')
+        return returnRedirect(quest_url)
     b = exec_ytdlp_cmd(url)
-    # j = json.loads(b)
-    # formats = j['formats']
-    # nama_url = ''
-    # for f in formats:
-    #     if f['ext'] == 'mp4' and f['url'] != '':
-    #         print('url->'+f['url'])
-    #         nama_url = f['url']
-    nama_url = b
-    print(nama_url)
-    # TODO: キャッシュへ書き込み
-    return returnRedirect(nama_url)
+    quest_url = b.decode()
+    print(quest_url)
+    ddbRegistQuestURL(url, quest_url)
+    return returnRedirect(quest_url)
 
 
 def returnBadRequest():
@@ -70,3 +72,35 @@ def exec_ytdlp_cmd(url):
         ["/var/task/src/lambda/get_quest_url/yt-dlp", '-i', '-q', '--no-warnings', '--no-playlist', '-f', 'b', '-g', url], capture_output=True)
     print("stdout:", cp.stdout)
     return cp.stdout
+
+
+# URLがDynamoDBにあるか確認し存在するならURLを返却
+def ddbGetQuestURL(url):
+    response = table.get_item(
+        Key={
+            'user_id': 'quest_url',
+            'video_id': f'{url}',
+        }
+    )
+    record = response.get('Item')
+    if record is None:
+        return None
+    return record.get('quest_url')
+
+
+# URLをキーにURLを登録(TTL付き)
+def ddbRegistQuestURL(yt_url, quest_url):
+    table.put_item(
+        Item={
+            'user_id': 'quest_url',
+            'video_id': yt_url,
+            'quest_url': quest_url,
+            'TTL': get_ttl()
+        }
+    )
+
+
+def get_ttl():
+    start = datetime.now()
+    expiration_date = start + timedelta(hours=1)
+    return round(expiration_date.timestamp())
