@@ -24,15 +24,15 @@ def main(event, context):
         return returnRedirect(url)
     # TODO: キャッシュから読み込み(URL変わらないよね・・・？)
     b = exec_ytdlp_cmd(url)
-    j = json.loads(b)
-    id = j['id']
-    print(id)
-    formats = j['formats']
-    nama_url = ''
-    for f in formats:
-        if f['ext'] == 'mp4' and f['url'] != '':
-            print('url->'+f['url'])
-            nama_url = f['url']
+    # j = json.loads(b)
+    # formats = j['formats']
+    # nama_url = ''
+    # for f in formats:
+    #     if f['ext'] == 'mp4' and f['url'] != '':
+    #         print('url->'+f['url'])
+    #         nama_url = f['url']
+    nama_url = b
+    print(nama_url)
     # TODO: キャッシュへ書き込み
     return returnRedirect(nama_url)
 
@@ -65,7 +65,8 @@ def returnRedirect(url):
 
 
 def exec_ytdlp_cmd(url):
+    # yt-dlp -i -q --no-warnings --no-playlist -g https://www.youtube.com/watch?v=xxxxxxxx
     cp = subprocess.run(
-        ["/var/task/src/lambda/get_quest_url/yt-dlp", "-J", url], capture_output=True)
+        ["/var/task/src/lambda/get_quest_url/yt-dlp", '-i', '-q', '--no-warnings', '--no-playlist', '-f', 'b', '-g', url], capture_output=True)
     print("stdout:", cp.stdout)
     return cp.stdout
