@@ -20,10 +20,10 @@ def main(event, context):
     url = queryStringParameters.get('url')
     if url is None:
         return returnBadRequest()
-    if httpMethod == 'HEAD':
-        # HEADはPCのみの挙動・・・だったらいいな
-        print('Not GET')
-        return returnRedirect(url)
+    # if httpMethod == 'HEAD':
+    #     # HEADはPCのみの挙動・・・だったらいいな
+    #     print('Not GET')
+    #     return returnRedirect(url)
     if not ('Android' in ua):
         # QuestのUAはstagefright/1.2 (Linux;Android 10)と予想
         print('Not Quest', ua)

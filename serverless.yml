@@ -79,3 +79,6 @@ functions:
 #         ProvisionedThroughput:
 #           ReadCapacityUnits: 3
 #           WriteCapacityUnits: 2
+#         TimeToLiveSpecification:
+#           AttributeName: TTL
+#           Enabled: True
