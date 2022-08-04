@@ -102,5 +102,5 @@ def ddbRegistQuestURL(yt_url, quest_url):
 
 def get_ttl():
     start = datetime.now()
-    expiration_date = start + timedelta(hours=1)
+    expiration_date = start + timedelta(minutes=15)
     return round(expiration_date.timestamp())
