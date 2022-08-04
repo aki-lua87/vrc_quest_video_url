@@ -18,9 +18,6 @@ src\lambda\get_quest_url に yt-dlp(https://github.com/yt-dlp/yt-dlp) の配置�
 - DEPLOY_BUCKET
   - ServerlessFrameworkデプロイ先S3バケット
 
-- DDB_TABLE
-  - DynamoDBテーブル名
-
 
 ### Use
 
