@@ -1,18 +1,9 @@
 service: serverless-jinnai
 
-# plugins:
-#   - serverless-python-requirements
-
 custom:
-  # pythonRequirements:
-  #   dockerizePip: true
-  #   dockerImage: lambci/lambda:build-python3.9
-  #   useStaticCache: false
-  #   useDownloadCache: false
-  #   layer: true
   deploymentBucket:
     name: ${env:DEPLOY_BUCKET}
-  vrc_video_table: ${env:DDB_TABLE}
+  vrc_video_table: ${self:service}-${opt:stage}-table
 
 provider:
   name: aws
@@ -59,26 +50,25 @@ functions:
           path: /q
           method: head
           cors: true
-# resources:
-#   Resources:
-#     独自テーブルは持たず他テーブルを利用するためコメントアウト
-#     vrcQuestTable:
-#       Type: "AWS::DynamoDB::Table"
-#       Properties:
-#         TableName: ${self:service}-${opt:stage}-table
-#         AttributeDefinitions:
-#           - AttributeName: user_id
-#             AttributeType: S
-#           - AttributeName: video_id
-#             AttributeType: S
-#         KeySchema:
-#           - AttributeName: user_id
-#             KeyType: HASH
-#           - AttributeName: video_id
-#             KeyType: RANGE
-#         ProvisionedThroughput:
-#           ReadCapacityUnits: 3
-#           WriteCapacityUnits: 2
-#         TimeToLiveSpecification:
-#           AttributeName: TTL
-#           Enabled: True
+resources:
+  Resources:
+    vrcQuestTable:
+      Type: "AWS::DynamoDB::Table"
+      Properties:
+        TableName: ${self:service}-${opt:stage}-table
+        AttributeDefinitions:
+          - AttributeName: attr_id
+            AttributeType: S
+          - AttributeName: video_id
+            AttributeType: S
+        KeySchema:
+          - AttributeName: attr_id
+            KeyType: HASH
+          - AttributeName: video_id
+            KeyType: RANGE
+        ProvisionedThroughput:
+          ReadCapacityUnits: 1
+          WriteCapacityUnits: 1
+        TimeToLiveSpecification:
+          AttributeName: TTL
+          Enabled: True

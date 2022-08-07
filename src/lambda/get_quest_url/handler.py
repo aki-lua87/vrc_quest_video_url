@@ -20,10 +20,6 @@ def main(event, context):
     url = queryStringParameters.get('url')
     if url is None:
         return returnBadRequest()
-    # if httpMethod == 'HEAD':
-    #     # HEADはPCのみの挙動・・・だったらいいな
-    #     print('Not GET')
-    #     return returnRedirect(url)
     if not ('Android' in ua):
         # QuestのUAはstagefright/1.2 (Linux;Android 10)と予想
         print('Not Quest', ua)
@@ -78,7 +74,7 @@ def exec_ytdlp_cmd(url):
 def ddbGetQuestURL(url):
     response = table.get_item(
         Key={
-            'user_id': 'quest_url',
+            'attr_id': 'quest_url',
             'video_id': f'{url}',
         }
     )
@@ -92,7 +88,7 @@ def ddbGetQuestURL(url):
 def ddbRegistQuestURL(yt_url, quest_url):
     table.put_item(
         Item={
-            'user_id': 'quest_url',
+            'attr_id': 'quest_url',
             'video_id': yt_url,
             'quest_url': quest_url,
             'TTL': get_ttl()
