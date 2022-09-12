@@ -21,4 +21,9 @@ src\lambda\get_quest_url に yt-dlp(https://github.com/yt-dlp/yt-dlp) の配置�
 
 ### Use
 
-https://cdtatu4j22.execute-api.ap-northeast-1.amazonaws.com/dev/q?url=[youtube_url]
+https://qst.akakitune87.net/q?url=[youtube_url]
+
+
+### site
+
+https://aki-lua87.github.io/vrc_quest_video_url/docs/
