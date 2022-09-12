@@ -7,23 +7,34 @@ from datetime import datetime, timedelta
 dynamodb = boto3.resource('dynamodb')
 table = dynamodb.Table(os.environ['VRC_VIDEO_TABLE'])
 
+PC_UA1 = 'Mozilla/5.0'
+PC_UA2 = 'NSPlayer'
+QUEST_UA = 'stagefright'
+
+PC_AE = '*'  # 'Accept-Encoding': '*'
+
 
 def main(event, context):
     print('event:', event)
     httpMethod = event.get('httpMethod')
     print('httpMethod:', httpMethod)
     ua = event.get('headers').get('User-Agent', '')
+    ae = event.get('headers').get('Accept-Encoding', '')
     print('User-Agent:', ua)
+    print('Accept-Encoding:', ae)
     queryStringParameters = event.get('queryStringParameters')
     if queryStringParameters is None:
         return returnBadRequest()
     url = queryStringParameters.get('url')
     if url is None:
         return returnBadRequest()
-    if not ('Android' in ua):
+    if not (QUEST_UA in ua):
         # QuestのUAはstagefright/1.2 (Linux;Android 10)と予想
         print('Not Quest', ua)
-        return returnRedirect(url)
+        if ae != PC_AE:  # ユーチューブ見れない対応、PCをQuestと同じ処理に
+            print('not VRC PC', ae)
+            return returnRedirect(url)
+        print('VRC PC', ae)
     quest_url = ddbGetQuestURL(url)
     if quest_url is not None:
         print('use DynamoDB record')
