@@ -1,48 +1,55 @@
 <!DOCTYPE html>
 <html lang="ja">
+
 <head>
-<meta charset="utf-8">
-<title>Quest向け動画URL解決サービス</title>
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="utf-8">
+    <title>Quest向け動画URL解決サービス</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 </head>
+
 <body>
 
-<article>
-<h1>VRC Video URL Resolve System for Quest</h1>
+    <article>
+        <h1>VRC Video URL Resolve System for Quest</h1>
 
-<label for="input">URL入力: </label>
-<!-- <textarea onchange="doCreateURL()" name="input" cols="40" rows="1" id="input"></textarea> -->
-<input type="text" id="input" size="50" placeholder="URL">
-<input type="button" onclick="doCreateURL()" value="URLを作成">
+        <label for="input">URL入力: </label>
+        <!-- <textarea onchange="doCreateURL()" name="input" cols="40" rows="1" id="input"></textarea> -->
+        <input type="text" id="input" size="50" placeholder="URL">
+        <input type="button" onclick="doCreateURL()" value="URLを作成">
 
-<p name="output" id="output"></p>
-<script>
-    // NOTE: https://note.affi-sapo-sv.com/js-clipbord-copy.php
-    const clipbordCopy = text =>{
-        if( !navigator.clipboard ) {
-            alert("クリップボードにコピーできませんでした");return false;
-        }
-        navigator.clipboard.writeText(text).then(
-            ()=>alert("クリップボードにコピーしました"),
-            ()=>alert("クリップボードにコピーできませんでした")
-        );
-        return true;
-    };
+        <p name="output" id="output"></p>
+        <script>
+            // NOTE: https://note.affi-sapo-sv.com/js-clipbord-copy.php
+            const clipbordCopy = text => {
+                if (!navigator.clipboard) {
+                    alert("クリップボードにコピーできませんでした"); return false;
+                }
+                navigator.clipboard.writeText(text).then(
+                    () => alert("クリップボードにコピーしました"),
+                    () => alert("クリップボードにコピーできませんでした")
+                );
+                return true;
+            };
 
-    function doCreateURL() {
-        const inputText = document.getElementById("input").value.trim();
-        output = 'https://cdtatu4j22.execute-api.ap-northeast-1.amazonaws.com/dev/q?url='+inputText;
-        clipbordCopy(output);
-        document.getElementById("output").innerHTML = output;
-    }
-</script>
-<!-- <section>
-<h2>about</h2>
-<p>Quest向け動画URL解決サービスです</p>
-<p>本システムを利用によって生じた損害等については一切の責任を負いかねます</p>
-<p>本システムは事前通知なく終了する可能性があります。</p>
-</section> -->
-</article>
+            function doCreateURL() {
+                const inputText = document.getElementById("input").value.trim();
+                output = 'https://qst.akakitune87.net/q?url=' + inputText;
+                clipbordCopy(output);
+                document.getElementById("output").innerHTML = output;
+            }
+        </script>
+
+        <br>
+
+        <div>・本サービスは予告なく終了することがあります</div>
+        <div>・本サービスの利用によって生じた損害等については一切の責任を負いかねます</div>
+
+        <br>
+
+        <p>auther: <a href="https://twitter.com/aki_lua87/">aki_lua87</a></p>
+
+    </article>
 
 </body>
+
 </html>
