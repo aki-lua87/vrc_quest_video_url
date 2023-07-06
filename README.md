@@ -1,6 +1,6 @@
 # vrc_quest_video_url
 
-陣内システム(https://nextnex.com/) のようなシステムを AWS サーバレスで実現しようとした物
+
 
 ## 必要なもの
 
