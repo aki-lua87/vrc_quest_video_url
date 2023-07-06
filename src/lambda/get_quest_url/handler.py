@@ -10,6 +10,7 @@ table = dynamodb.Table(os.environ['VRC_VIDEO_TABLE'])
 PC_UA1 = 'Mozilla/5.0'
 PC_UA2 = 'NSPlayer'
 QUEST_UA = 'stagefright'
+simulation = 'NSPlayer/12.00.22000.2003 WMFSDK/12.00.22000.2003'
 
 PC_AE = '*'  # 'Accept-Encoding': '*'
 
@@ -26,16 +27,18 @@ def main(event, context):
     if queryStringParameters is None:
         return returnBadRequest()
     url = queryStringParameters.get('url')
+    print('url:', url)
     if url is None:
         return returnBadRequest()
     if not (QUEST_UA in ua):
-        # QuestのUAはstagefright/1.2 (Linux;Android 10)と予想
+        # QuestのUAはstagefright/1.2 (Linux;Android 10)とする
         print('Not Quest', ua)
-        if ae != PC_AE:  # ユーチューブ見れない対応、PCをQuestと同じ処理に
-            print('not VRC PC', ae)
+        if (simulation in ua):
+            print('Runtime Exection')
+        else:
             return returnRedirect(url)
-        print('VRC PC', ae)
     quest_url = ddbGetQuestURL(url)
+    print('for Quest URL:', quest_url)
     if quest_url is not None:
         print('use DynamoDB record')
         return returnRedirect(quest_url)
